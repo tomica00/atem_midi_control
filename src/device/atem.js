@@ -92,6 +92,10 @@ class Atem {
     // 0 -> 10,000
     return this.#device.setTransitionPosition(pos);
   }
+  
+  setUSKLumaSettings(props, me, keyer) {
+    return this.#device.setUpstreamKeyerLumaSettings(props, me, keyer); // setUpstreamKeyerLumaSettings(newProps, me = 0, keyer = 0)
+  }
 
   transition(type) {
     switch (type) {

@@ -20,6 +20,7 @@ class MIDIControlPanel {
     this.#externalCallbacks = _.defaults(externalCallbacks, {
       onButtonPress: (() => {}),
       onFader:       (() => {}),
+	  onTbar:       (() => {}),
       onReconnect:   (() => {}),
     });
 
@@ -109,11 +110,21 @@ class MIDIControlPanel {
     const ret = this.#output.sendMessage(msg);
   }
 
-  #buttonLight(btn, on) {
+  #buttonLight(btn, on, color) {
     if (on) {
-      this.#send(btn.down);
+		//this.#send(btn.down);
+		const btnmsg = [];
+		btnmsg[0] = btn.down[0];
+		btnmsg[1] = btn.down[1];
+		btnmsg[2] = btn.color; 		// LED on (APC MINI: 0=OFF, 1=GREEN, 2=GREEN BLINK, 3=RED, 4=RED BLINK, 5=YELLOW, 6=YELLOW BLINK)
+		this.#send(btnmsg);
     } else {
-      this.#send(btn.up);
+      //this.#send(btn.up); 	// this doesn't work for APC mini, it must be a NOTE ON message
+	  const btnmsg = [];
+	  btnmsg[0] = btn.down[0];
+	  btnmsg[1] = btn.down[1];
+	  btnmsg[2] = 0; 			// LED off
+	  this.#send(btnmsg);
     }
     btn.on = on;
   }
@@ -130,27 +141,27 @@ class MIDIControlPanel {
       clearInterval(btn.flashInterval);
       btn.flashInterval = null;
       btn.flashing = false;
-      this.#buttonLight(btn, false);
+      this.#buttonLight(btn, false, 0);
       return;
     }
 
     btn.flashing = true;
     btn.flashInterval = setInterval(
-      (() => this.#buttonLight(btn, !btn.on) ),
+      (() => this.#buttonLight(btn, !btn.on, 5) ),
       300,
     );
   }
 
   #turnonButtonInGroup(btn) {
     if (btn.light === 'exclusive') {
-      _.without(_.filter(this.#config.buttons, { group: btn.group, on: true }), btn).forEach((btn) => this.#buttonLight(btn, false));
+      _.without(_.filter(this.#config.buttons, { group: btn.group, on: true }), btn).forEach((btn) => this.#buttonLight(btn, false, 0));
     }
     if (['exclusive', 'temp'].includes(btn.light)) {
-      this.#buttonLight(btn, true);
+      this.#buttonLight(btn, true, 5);
     }
     if (btn.light === 'temp') {
       setTimeout(
-        (() => this.#buttonLight(btn, false)),
+        (() => this.#buttonLight(btn, false, 0)),
         500,
       );
     }
@@ -161,10 +172,10 @@ class MIDIControlPanel {
       this.#turnonButtonInGroup(btn);
     }
 
-    this.#externalCallbacks.onButtonPress(btn.group, btn.name);
+    this.#externalCallbacks.onButtonPress(btn.group, btn.name, btn.param);
   }
-
-  #onFader(btn, val) {
+  
+  #onTbar(btn, val) {
     let adjusted;
 
     if (btn.reverse) {
@@ -180,7 +191,15 @@ class MIDIControlPanel {
       btn.reverse = true;
     }
 
-    this.#externalCallbacks.onFader(btn.name, adjusted);
+    this.#externalCallbacks.onTbar(btn.name, adjusted);
+  }
+
+  #onFader(btn, param, val) {
+    let adjusted;
+
+    adjusted = Math.round(val * (10000/127));
+
+    this.#externalCallbacks.onFader(btn.name, btn.param, adjusted);
   }
 
   #listen() {
@@ -190,10 +209,13 @@ class MIDIControlPanel {
       if (btn) {
         switch (btn.type) {
           case 'button':
-            this.#onPress(btn);
+            if (msg[2]!==0) this.#onPress(btn);
             break;
-          case 'fader':
-            this.#onFader(btn, msg[2]);
+		  case 'fader':
+            this.#onFader(btn, btn.param, msg[2]);
+            break;
+          case 'T-bar':
+            this.#onTbar(btn, msg[2]);
             break;
         }
       }
@@ -217,11 +239,11 @@ class MIDIControlPanel {
     switch (state) {
       case 'off':
         this.#buttonLightFlash(btn, false);
-        this.#buttonLight(btn, false);
+        this.#buttonLight(btn, false, 0);
         break;
       case 'on':
         this.#buttonLightFlash(btn, false);
-        this.#buttonLight(btn, true);
+        this.#buttonLight(btn, true, 0);
         break;
       case 'flashing':
         this.#buttonLightFlash(btn, true);

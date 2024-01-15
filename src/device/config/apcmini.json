@@ -1,0 +1,17 @@
+{
+  "name": "APC MINI",
+  "startupTimeMS": 5000,
+  "buttons": [
+	{ "type": "T-bar",  "light": "exclusive", "group": "faders",  "name": "transition",                "down": [176,  56,   0], "up": [176,  56, 127] },
+	{ "type": "fader",  "light": "exclusive", "group": "faders",  "name": "USK_1", "param": "clip",    "down": [176,  48,   0], "up": [176,  48, 127] },
+	{ "type": "fader",  "light": "exclusive", "group": "faders",  "name": "USK_1", "param": "gain",    "down": [176,  49,   0], "up": [176,  49, 127] },
+	{ "type": "fader",  "light": "exclusive", "group": "faders",  "name": "USK_2", "param": "clip",    "down": [176,  48,   0], "up": [176,  50, 127] },
+	{ "type": "fader",  "light": "exclusive", "group": "faders",  "name": "USK_2", "param": "gain",    "down": [176,  49,   0], "up": [176,  51, 127] },
+	{ "type": "button", "light": "exclusive", "group": "PGM",     "name":  "1",                        "down": [144,  0, 127],  "up": [128,  0,   0], "color": 3 },
+    { "type": "button", "light": "exclusive", "group": "PGM",     "name":  "2",                        "down": [144,  1, 127],  "up": [128,  1,   0], "color": 3 },
+    { "type": "button", "light": "exclusive", "group": "PGM",     "name":  "3",                        "down": [144,  2, 127],  "up": [128,  2,   0], "color": 3 },
+    { "type": "button", "light": "exclusive", "group": "PGM",     "name":  "4",                        "down": [144,  3, 127],  "up": [128,  3,   0], "color": 3 },
+	{ "type": "button", "light": "temp",      "group": "USK",     "name":  "USK_1", "param": "invert", "down": [144,  64, 127],  "up": [128,  64,   0] },
+	{ "type": "button", "light": "temp",      "group": "USK",     "name":  "USK_2", "param": "invert", "down": [144,  66, 127],  "up": [128,  66,   0] }
+  ]
+}
