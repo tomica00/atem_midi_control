@@ -1,5 +1,20 @@
 # ATEM MIDI control - Control a Blackmagic ATEM with a cheap MIDI controller
 
+## My fork
+Hi, this is my modified version of the original atem_midi_control!
+
+Changes:
+Added support for APC mini and nanoKONTROL2. The first two faders on APC mini are clip and gain for USK1, the last fader is the T-bar. Some buttons are for camera switching, but change the configuration file /src/device/config/apcmini.json to your needs. For nanoKONTROL2, the first fader and the pot above it are clip and gain for USK1, second fader and pot are clip and gain for USK2. "Solo" buttons change the invert parameter for upstream keyers. The last fader is the T-bar. Change the /src/device/config/nanokontrol2.json to your needs.
+The logic behind the down and up parameters: 
+[midi message type, fader number, velocity or value]
+example: "down": [176,  7,   0], "up": [176,  7, 127]
+176 (B0 in hex) is code for MIDI CC message
+7 is the number of the fader or knob or button (buttons on nanoKONTROL2 send CC instead of note on, note off!)
+the last number is the velocity or value, I'm still working on it, just leave it as is.
+All values are decimal. If you use MIDI-OX to sniff the MIDI messages from your controller, you'll need to convert hex to dec, use your system's calculator app.
+
+Now the original readme:
+
 ## Why?
 
 An entry level OEM control panel costs upwards of $3000 USD.
