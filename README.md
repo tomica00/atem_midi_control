@@ -46,6 +46,8 @@ This app should work on OS X, however it's untested.
 
 ### Control interfaces
 - TY-1500HD (MIDI)
+
+Added in this fork:
 - APC mini
 - nanoKONTROL2
 
